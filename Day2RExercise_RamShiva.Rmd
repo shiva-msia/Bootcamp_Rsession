@@ -1,0 +1,117 @@
+---
+title: "R day 2"
+author: "Shiva"
+date: "9/18/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+here::here("data","gapminder5.csv")
+
+gapminder <- read.csv(here::here("data","gapminder5.csv"))
+
+str(gapminder)
+```
+## Converting factors to characters
+
+```{r}
+gapminder$continent <- as.character(gapminder$continent)
+gapminder$country <- as.character(gapminder$country)
+str(gapminder)
+```
+
+```{r}
+for (i in 1:nrow(gapminder)){gapminder[i,"gdp"] <- gapminder[i,"pop"]*gapminder[i,"gdpPercap"]}
+for (i in 1:nrow(gapminder)){gapminder[i,"log_gdpPercap"] <- log(gapminder[i,"gdpPercap"])
+                             gapminder[i,"log_pop"] <- log(gapminder[i,"pop"])}
+
+years <- unique(gapminder$year)
+for (i in years) {mean_le <- mean(gapminder$lifeExp[gapminder$year == i],na.rm = T)
+                  print(paste0(i,": ",mean_le))}
+for (i in unique(gapminder$continent)) {mean_le <- mean(gapminder$lifeExp[gapminder$continent == i],na.rm = T)
+                              print(paste0(i,": ",mean_le))}
+
+
+for (i in unique(gapminder$continent)) 
+  {
+  print(paste0("Continent: ",i))
+  for(j in unique(gapminder$year))
+    {
+      sd_le <- sd(gapminder$lifeExp[gapminder$continent == i & gapminder$year == j])
+  }
+  print(paste0(j,": ",sd_le))
+  }
+```
+
+## Apply
+
+```{r}
+vars <- gapminder[,c("lifeExp","pop","gdpPercap")]
+apply(vars,2,mean)
+apply(gapminder,2,mean)
+
+for (i in vars) {print(mean(i))}
+```
+
+## While
+
+```{r}
+i <- 1952
+while (i < 1987) {
+  sd_lf <- sd(gapminder$lifeExp[gapminder$year == i])
+  print(paste0(i,": ",sd_lf))
+  i <- i + 5
+}
+
+i <- 1987
+while (i <= 2002) {
+  sd_lf <- sd(gapminder$lifeExp[gapminder$year == i])
+  print(paste0(i,": ",sd_lf))
+  i <- i + 5
+}
+
+```
+
+## if and ifelse
+
+```{r}
+random_year <- sample(unique(gapminder$year),1)
+
+find_min_max <- function(df,var2 = "lifeExp",var = "continent") {
+  print(paste0(mean(df[[var2]])))
+  print(paste0(median(df[[var2]])))
+  print(paste0(min(df[[var2]])))
+  print(paste0(max(df[[var2]])))
+  }
+
+find_min_max(gapminder,"lifeExp","continent")
+
+```
+
+
+
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
